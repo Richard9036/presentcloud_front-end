@@ -5,7 +5,7 @@
 在命令行模式下：
 
 下载代码
-gitclone https://github.com/Richard9036/presentcloud_front-end.git
+git clone https://github.com/Richard9036/presentcloud_front-end.git
 
 进入项目根目录
 
