@@ -5,7 +5,7 @@
   "author": "Richard9036",
   "private": true,
   "scripts": {
-    "dev": "nuxt",
+    "dev": "nuxt --open",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate"
@@ -15,7 +15,7 @@
     "element-ui": "^2.4.11",
     "less": "^3.11.1",
     "less-loader": "^5.0.0",
-    "nuxt": "^2.0.0"
+    "nuxt": "^2.12.0"
   },
   "devDependencies": {}
 }

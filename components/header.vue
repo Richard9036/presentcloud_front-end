@@ -16,7 +16,7 @@
             <nuxt-link to='/data'>数据管理</nuxt-link>
             <nuxt-link to='/about'>关于我们</nuxt-link>
         </el-row>
-        <div>用户信息</div>
+        <nuxt-link to='/login'>登录</nuxt-link>
 
     </el-row>
     
