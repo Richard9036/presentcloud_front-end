@@ -12,11 +12,20 @@
             <nuxt-link to='/user'>用户管理</nuxt-link>
             <nuxt-link to='/menu'>菜单管理</nuxt-link>
             <nuxt-link to='/role'>角色管理</nuxt-link>
-            <nuxt-link to='/authority'>权限管理</nuxt-link>
+            <nuxt-link to='/class'>班课管理</nuxt-link>
             <nuxt-link to='/data'>数据管理</nuxt-link>
-            <nuxt-link to='/about'>关于我们</nuxt-link>
         </el-row>
-        <nuxt-link to='/login'>登录</nuxt-link>
+       <el-dropdown>
+  <span class="el-dropdown-link">
+    个人信息<i class="el-icon-arrow-down el-icon--right"></i>
+  </span>
+  <el-dropdown-menu slot="dropdown">
+    <el-dropdown-item><nuxt-link to='/personal'>个人信息</nuxt-link></el-dropdown-item>
+
+    <el-dropdown-item><nuxt-link to='/login'>退出</nuxt-link></el-dropdown-item>
+
+  </el-dropdown-menu>
+</el-dropdown>
 
     </el-row>
     
@@ -84,6 +93,12 @@ export default {
 
 }
 
-
+.el-dropdown-link {
+    cursor: pointer;
+    color: #409EFF;
+  }
+  .el-icon-arrow-down {
+    font-size: 12px;
+  }
 </style>
 

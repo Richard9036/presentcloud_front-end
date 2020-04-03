@@ -6,7 +6,8 @@
     <nuxt/>
   </el-aside>
   <el-main>
-    Main
+    <Table/>
+    <nuxt/>
   </el-main>
 </el-container>
 
@@ -17,11 +18,19 @@
 
 <script>
 import Role from "@/components/role/role.vue"
+import Table from "@/components/role/table.vue"
+
 export default {
   components:{
-    Role
+    Role,
+    Table
   }
-  }
+
+
+      
+
+}
+
 </script>
 
 <style>

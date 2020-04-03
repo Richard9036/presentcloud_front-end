@@ -6,7 +6,8 @@
     <nuxt/>
   </el-aside>
   <el-main>
-    Main
+    <Table/>
+    <nuxt/>
   </el-main>
 </el-container>
     
@@ -17,9 +18,11 @@
 
 <script>
 import User from "@/components/user/user.vue"
+import Table from "@/components/user/table.vue"
 export default {
   components:{
-    User
+    User,
+    Table
   }
   }
 </script>

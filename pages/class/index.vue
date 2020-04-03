@@ -1,11 +1,12 @@
 <template>
   <div><el-container>
   <el-aside width="200px">
-    <Authority/>
+    <Class/>
     <nuxt/>
   </el-aside>
   <el-main>
-    Main
+    <Table/>
+    <nuxt/>
   </el-main>
 </el-container>
 
@@ -16,10 +17,12 @@
 </template>
 
 <script>
-import Authority from "@/components/authority/authority.vue"
+import Class from "@/components/class/class.vue"
+import Table from "@/components/class/table.vue"
 export default {
   components:{
-    Authority
+    Class,
+    Table
   }
   }
 </script>

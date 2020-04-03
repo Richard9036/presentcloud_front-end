@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import Edit from "@/components/authority/edit.vue"
+import Edit from "@/components/class/edit.vue"
 export default {
   components:{
     Edit

@@ -1,14 +1,14 @@
 <template>
-  <div><el-container>
+  <div>
+    <el-container>
   <el-aside width="200px">
-    <Authority/>
+    <Personal/>
     <nuxt/>
   </el-aside>
   <el-main>
-    Main
+    <nuxt/>
   </el-main>
 </el-container>
-
 
   </div>
 
@@ -16,10 +16,11 @@
 </template>
 
 <script>
-import Authority from "@/components/authority/authority.vue"
+import Personal from "@/components/personal/personal.vue"
+
 export default {
   components:{
-    Authority
+    Personal
   }
   }
 </script>

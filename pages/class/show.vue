@@ -1,28 +1,27 @@
 <template>
-  <div>
-    <el-container>
+  <div><el-container>
   <el-aside width="200px">
-    <Menu/>
+    <Class/>
     <nuxt/>
   </el-aside>
   <el-main>
-    <Table/>
+    <Show/>>
     <nuxt/>
   </el-main>
 </el-container>
 
-  </div>
 
+  </div>
 
 </template>
 
 <script>
-import Menu from "@/components/menu/menu.vue"
-import Table from "@/components/menu/table.vue"
+import Class from "@/components/class/class.vue"
+import Show from "@/components/class/show.vue"
 export default {
   components:{
-    Menu,
-    Table
+    Class,
+    Show
   }
   }
 </script>
