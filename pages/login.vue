@@ -15,6 +15,7 @@
     </el-menu>
     <!-- 账号登陆 -->
     <el-form
+      ref="loginFormRef"
       :model="loginForm"
       :rules="loginFormRules"
       v-if="flag"
@@ -35,12 +36,12 @@
           type="password"
           placeholder="请输入密码"
         ></el-input>
-                <nuxt-link :to="{path:'/forgot_password'}">
+        <nuxt-link :to="{path:'/forgot_password'}">
           <p class="forgot">忘记密码？</p>
         </nuxt-link>
       </el-form-item>
       <el-form-item class="login_button">
-        <el-button type="primary">提交</el-button>
+        <el-button type="primary" @click="login">提交</el-button>
         <nuxt-link :to="{path:'/register'}">
           <el-button type="primary">注册</el-button>
         </nuxt-link>
@@ -94,10 +95,10 @@ export default {
     return {
       activeIndex: "1",
       loginForm: {
-        username: "",
-        password: "",
-        telephoneNumber: "",
-        checkNumber: ""
+        username: "admin",
+        password: "123456"
+        // telephoneNumber: "",
+        // checkNumber: ""
       },
       flag: true,
       loginFormRules: {
@@ -146,7 +147,33 @@ export default {
         this.flag = true;
       }
     },
-  },
+    login() {
+      this.$refs.loginFormRef.validate(async valid => {
+        console.log(valid);
+        if (valid) {
+          const { data: res } = await this.$http.post(
+            "http://127.0.0.1:8888/api/private/v1/login",
+            this.loginForm
+          );
+          console.log(res);
+          if (res.meta.status !== 200) {
+            this.$message({
+              message: res.meta.msg,
+              type: "error"
+            });
+          } else {
+            this.$message({
+              message: "登陆成功",
+              type: "success"
+            });
+            // 保存服务器端返回的token至sessionStorage，会话期间才生效
+            window.sessionStorage.setItem('token',res.data.token);
+            this.$router.push('/')
+          }
+        }
+      });
+    }
+  }
 };
 </script>
 
@@ -222,8 +249,8 @@ export default {
   display: block;
   left: 0;
 }
-.forgot{
-  color:#2E8B57;
-  font-size:17px
+.forgot {
+  color: #2e8b57;
+  font-size: 17px;
 }
 </style>

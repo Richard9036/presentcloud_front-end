@@ -6,9 +6,9 @@
     <nuxt/>
     </el-aside>
   <el-main>
- <el-col :span="6">
+ <el-col :span="6" class="already">
 <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-  <el-form-item label="班课号" prop="class_id">
+  <el-form-item label="班课号:" prop="class_id">
     <el-input v-model="ruleForm.class_id"></el-input>
   </el-form-item>
   <el-form-item>
@@ -66,6 +66,11 @@ export default {
 </script>
 
 <style>
-
+.already {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 </style>
 

@@ -1,20 +1,19 @@
 
 <template>
-
 <el-row class="tac">
-  
-    <el-menu
-      default-active="1"
+      <el-menu
+      :default-active="$route.path"
       class="el-menu-vertical-demo"
       @open="handleOpen"
-      @close="handleClose">
+      @close="handleClose"
+      router="">
       <el-submenu index="1">
         <template slot="title">
           <i class="el-icon-location"></i>
           <span>班课管理</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="1-1"><nuxt-link to='/class/show'>新增班课</nuxt-link></el-menu-item>
+          <el-menu-item index="/class/show">新增班课</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
     </el-menu>

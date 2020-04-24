@@ -6,8 +6,7 @@
     <nuxt/>
   </el-aside>
   <el-main>
-    <Table/>
-    <nuxt/>
+    Main
   </el-main>
 </el-container>
 
@@ -18,11 +17,9 @@
 
 <script>
 import Menu from "@/components/menu/menu.vue"
-import Table from "@/components/menu/table.vue"
 export default {
   components:{
-    Menu,
-    Table
+    Menu
   }
   }
 </script>

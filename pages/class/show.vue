@@ -5,7 +5,7 @@
     <nuxt/>
   </el-aside>
   <el-main>
-    <Show/>>
+    <Show/>
     <nuxt/>
   </el-main>
 </el-container>

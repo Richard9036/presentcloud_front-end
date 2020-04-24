@@ -1,7 +1,7 @@
 <template>
 
 <el-row class="tac">
-      <el-menu
+   <el-menu
       :default-active="$route.path"
       class="el-menu-vertical-demo"
       @open="handleOpen"
@@ -10,22 +10,22 @@
       <el-submenu index="1">
         <template slot="title">
           <i class="el-icon-location"></i>
-          <span>数据管理</span>
+          <span>权限管理</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="/data/create">数据字典录入</el-menu-item>
+          <el-menu-item index="/authority/create">新增权限</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
     </el-menu>
-
-    <!-- <el-menu
+<!-- 
+    <el-menu
       default-active="1"
       class="el-menu-vertical-demo"
       @open="handleOpen"
       @close="handleClose">
             <el-menu-item index="2">
         <i class="el-icon-menu"></i>
-        <span slot="title">数据字典录入</span>
+        <span slot="title">编辑权限</span>
       </el-menu-item>
     </el-menu> -->
   

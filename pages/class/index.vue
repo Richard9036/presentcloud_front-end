@@ -5,7 +5,8 @@
     <nuxt/>
   </el-aside>
   <el-main>
-    <Table/>
+      <el-card> <Table/></el-card>
+   
     <nuxt/>
   </el-main>
 </el-container>

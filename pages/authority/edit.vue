@@ -2,11 +2,11 @@
   <div>
     <el-container>
   <el-aside width="200px">
-    <Personal/>
+    <Edit/>
     <nuxt/>
   </el-aside>
   <el-main>
-    <nuxt/>
+    Main
   </el-main>
 </el-container>
 
@@ -16,11 +16,10 @@
 </template>
 
 <script>
-import Personal from "@/components/personal/personal.vue"
-
+import Edit from "@/components/authority/edit.vue"
 export default {
   components:{
-    Personal
+    Edit
   }
   }
 </script>
