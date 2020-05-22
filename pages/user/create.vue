@@ -53,8 +53,8 @@ export default {
     return {
       addForm: {
         username: "",
-        password: "",
-        mobile: ""
+        mobile: "",
+        password: ""
       },
       // 添加表单的验证规则对象
       addFormRules: {
@@ -85,19 +85,22 @@ export default {
   },
   methods: {
     addUser() {
-      // this.$refs.addFormRef.validate(async valid => {
-      //   if (!valid) return;
-      //   // 可以发起添加用户的网络请求
-      //   const { data: res } = await this.$http.post("users", this.addForm);
-      //   if (res.meta.status !== 201) {
-      //     this.$message.error("添加用户失败！");
-      //   }
-      //   this.$message.success("添加用户成功！");
-      //   // 隐藏添加用户的对话框
-      //   this.addDialogVisible = false;
-      //   // 重新获取用户列表数据
-      //   this.getUserList();
-      // });
+      this.$refs.addFormRef.validate(async valid => {
+        if (!valid) return;
+        // 可以发起添加用户的网络请求
+        var qs = require("qs");
+        const { data: res } = await this.$axios.post(
+          "/user/create",
+          qs.stringify(this.addForm)
+        );
+        console.log(res);
+        if (res.code != 200) {
+          this.$message.error("添加用户失败！");
+        } else {
+          this.$message.success("添加用户成功！");
+          this.$router.push("/user");
+        }
+      });
     }
   }
 };

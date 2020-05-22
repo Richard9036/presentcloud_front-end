@@ -1,12 +1,12 @@
 <template>
-
-<el-row class="tac">
-      <el-menu
+  <el-row class="tac">
+    <el-menu
       :default-active="$route.path"
       class="el-menu-vertical-demo"
       @open="handleOpen"
       @close="handleClose"
-      router="">
+      router
+    >
       <el-submenu index="1">
         <template slot="title">
           <i class="el-icon-location"></i>
@@ -14,38 +14,25 @@
         </template>
         <el-menu-item-group>
           <el-menu-item index="/data/create">数据字典录入</el-menu-item>
+          <el-menu-item index="/data/show">数据层级展示</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
     </el-menu>
-
-    <!-- <el-menu
-      default-active="1"
-      class="el-menu-vertical-demo"
-      @open="handleOpen"
-      @close="handleClose">
-            <el-menu-item index="2">
-        <i class="el-icon-menu"></i>
-        <span slot="title">数据字典录入</span>
-      </el-menu-item>
-    </el-menu> -->
-  
-</el-row>
-
+  </el-row>
 </template>
 
 <script>
-  export default {
-    methods: {
-      handleOpen(key, keyPath) {
-        console.log(key, keyPath);
-      },
-      handleClose(key, keyPath) {
-        console.log(key, keyPath);
-      }
+export default {
+  methods: {
+    handleOpen(key, keyPath) {
+      console.log(key, keyPath);
+    },
+    handleClose(key, keyPath) {
+      console.log(key, keyPath);
     }
   }
+};
 </script>
 
 <style>
-
 </style>

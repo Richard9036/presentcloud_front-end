@@ -33,9 +33,10 @@ export default {
   plugins: [
     "~plugins/vue-resource",
     "@/plugins/element-ui",
+    '@/plugins/axios-plugin',
     // ssr=false只在客户端引入
     // https://www.jianshu.com/p/eb83b8d189bb
-    //{ src: "~/plugins/routeguard", ssr: false }
+    { src: "~/plugins/routeguard", ssr: false },
   ],
   /*
    ** Nuxt.js dev-modules
@@ -47,15 +48,34 @@ export default {
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
     "@nuxtjs/axios",
-    "@nuxtjs/proxy" //添加proxy模块
+    "@nuxtjs/proxy", //添加proxy模块
+
+    // Simple usage
+    "cookie-universal-nuxt",
+
+    // With options
+    ["cookie-universal-nuxt", { alias: "cookiz" }]
   ],
   /*
    ** Axios module configuration
    ** See https://axios.nuxtjs.org/options
    */
   axios: {
-    baseURL: "http://127.0.0.1:8888/api/private/v1/"
+    //是否允许跨域
+    proxy: true,
+    browserBaseURL: "http://localhost:8080",
+    withCredentials: true,
   },
+  proxy: {
+    "/api": {
+      target: "http://localhost:8080/",
+      changeOrigin: true,
+      pathRewrite: {
+        "^/api": "/"
+      }
+    }
+  },
+
   /*
    ** Build configuration
    */

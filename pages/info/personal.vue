@@ -13,17 +13,17 @@
               </div>
             </el-col>
             <el-col :span="15">
-              <div class="grid-content bg-purple" style="color:#909399">张三</div>
+              <div class="grid-content bg-purple" style="color:#909399">{{userInfo.name}}</div>
             </el-col>
           </el-row>
           <el-row :gutter="4">
             <el-col :span="6">
               <div class="grid-content bg-purple">
-                <i class="iconfont icon-users"></i>学院：
+                <i class="iconfont icon-users"></i>性别：
               </div>
             </el-col>
             <el-col :span="17">
-              <div class="grid-content bg-purple" style="color:#909399">福州大学数学与计算机学院</div>
+              <div class="grid-content bg-purple" style="color:#909399">{{userInfo.sex}}</div>
             </el-col>
           </el-row>
           <el-row :gutter="4">
@@ -33,23 +33,25 @@
               </div>
             </el-col>
             <el-col :span="15">
-              <div class="grid-content bg-purple" style="color:#909399">190327000</div>
+              <div class="grid-content bg-purple" style="color:#909399">{{userInfo.userId}}</div>
             </el-col>
           </el-row>
           <el-row :gutter="4">
             <el-col :span="6">
               <div class="grid-content bg-purple">
-                <i class="el-icon-menu"></i>身份：
+                <i class="el-icon-menu"></i>手机：
               </div>
             </el-col>
             <el-col :span="15">
-              <div class="grid-content bg-purple" style="color:#909399">管理员</div>
+              <div class="grid-content bg-purple" style="color:#909399">{{userInfo.tel}}</div>
             </el-col>
           </el-row>
           <br />
-          <div style="text-align:center">
-            <el-button type="primary" icon="el-icon-edit"><nuxt-link to="/info/edit">修改信息</nuxt-link></el-button>
-          </div>
+          <!-- <div style="text-align:center"> -->
+            <!-- <el-button type="primary" icon="el-icon-edit"> -->
+              <!-- <nuxt-link to="/info/edit">修改信息</nuxt-link> -->
+            <!-- </el-button> -->
+          <!-- </div> -->
         </el-card>
       </el-main>
     </el-container>
@@ -57,7 +59,28 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      userInfo: {}
+    };
+  },
+  created() {
+    this.getUserInfo();
+  },
+  methods: {
+    async getUserInfo() {
+      const { data: res } = await this.$axios.get("/user/getCurrentUserApi");
+      console.log(res);
+      if (res.code != 200) {
+        MessageBox("提示", "获取用户列表失败");
+      } else {
+        this.userInfo = res.data;
+        console.log(this.userInfo);
+      }
+    }
+  }
+};
 </script>
 
 <style lang="less" scoped>

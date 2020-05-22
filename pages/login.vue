@@ -4,21 +4,17 @@
     <img class="img" id="logo_img" src="@/assets/login/logo.png" />
     <span id="logo_text" class="text">后台管理系统</span>
     <el-menu
-      :default-active="activeIndex"
       mode="horizontal"
-      @select="handleSelect"
       background-color="transparent"
       active-text-color="blue"
     >
-      <el-menu-item index="1">用户名登陆</el-menu-item>
-      <el-menu-item index="2">验证码登陆</el-menu-item>
+
     </el-menu>
     <!-- 账号登陆 -->
     <el-form
       ref="loginFormRef"
       :model="loginForm"
       :rules="loginFormRules"
-      v-if="flag"
       label-width="0px"
       class="login_form"
     >
@@ -42,38 +38,9 @@
       </el-form-item>
       <el-form-item class="login_button">
         <el-button type="primary" @click="login">提交</el-button>
-        <nuxt-link :to="{path:'/register'}">
+        <!-- <nuxt-link :to="{path:'/register'}">
           <el-button type="primary">注册</el-button>
-        </nuxt-link>
-      </el-form-item>
-    </el-form>
-    <!-- 手机号登陆 -->
-    <el-form
-      :model="loginForm"
-      :rules="loginFormRules"
-      v-if="!flag"
-      label-width="0px"
-      class="login_form"
-    >
-      <el-form-item prop="telephoneNumber">
-        <el-input
-          v-model="loginForm.telephoneNumber"
-          prefix-icon="el-icon-mobile-phone"
-          placeholder="请输入手机号"
-        ></el-input>
-      </el-form-item>
-      <el-form-item prop="checkNumber">
-        <el-input
-          v-model="loginForm.checkNumber"
-          prefix-icon="el-icon-message"
-          type="number"
-          placeholder="请输入验证码"
-          style="width:69%"
-        ></el-input>
-        <el-button type="success">发送验证码</el-button>
-      </el-form-item>
-      <el-form-item class="login_button">
-        <el-button type="primary">提交</el-button>
+        </nuxt-link> -->
       </el-form-item>
     </el-form>
     <!-- 版权声明 -->
@@ -89,25 +56,22 @@
 </template>
 
 <script>
+import Cookie from 'js-cookie'
 export default {
   layout: "custom",
   data() {
     return {
-      activeIndex: "1",
       loginForm: {
         username: "admin",
         password: "123456"
-        // telephoneNumber: "",
-        // checkNumber: ""
       },
-      flag: true,
       loginFormRules: {
         //验证用户名是否合法
         username: [
           { required: true, message: "请输入用户名", trigger: "blur" },
           {
             min: 3,
-            max: 10,
+            max: 20,
             message: "用户名长度为 3 到 10 个字符",
             trigger: "blur"
           }
@@ -117,7 +81,7 @@ export default {
           { required: true, message: "请输入密码", trigger: "blur" },
           {
             min: 6,
-            max: 15,
+            max: 150,
             message: "密码长度为 6 到 15 个字符",
             trigger: "blur"
           }
@@ -139,24 +103,13 @@ export default {
     };
   },
   methods: {
-    handleSelect(key, keyPath) {
-      console.log(key);
-      if (key == 2) {
-        this.flag = false;
-      } else {
-        this.flag = true;
-      }
-    },
     login() {
       this.$refs.loginFormRef.validate(async valid => {
-        console.log(valid);
         if (valid) {
-          const { data: res } = await this.$http.post(
-            "http://127.0.0.1:8888/api/private/v1/login",
-            this.loginForm
-          );
+          var qs = require('qs');
+          const { data: res } = await this.$axios.post("/login", qs.stringify(this.loginForm));
           console.log(res);
-          if (res.meta.status !== 200) {
+          if (res.code !== 0) {
             this.$message({
               message: res.meta.msg,
               type: "error"
@@ -166,9 +119,11 @@ export default {
               message: "登陆成功",
               type: "success"
             });
-            // 保存服务器端返回的token至sessionStorage，会话期间才生效
-            window.sessionStorage.setItem('token',res.data.token);
-            this.$router.push('/')
+            
+            // window.sessionStorage.setItem("token", res.token);
+            // this.$cookies.set("sid", res.token)
+            console.log(this.$cookies.get('sid'))
+            this.$router.push("/");
           }
         }
       });

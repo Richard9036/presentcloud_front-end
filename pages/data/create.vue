@@ -51,6 +51,7 @@ export default {
   },
   data() {
     return {
+      id: "",
       options: [
         {
           value: "选项1",
@@ -71,7 +72,7 @@ export default {
       ],
       value: "",
       addForm: {
-        class:"",
+        class: "",
         key: "",
         value: "",
         default: "2"
@@ -100,6 +101,9 @@ export default {
       }
     };
   },
+  created() {
+    this.getParams();
+  },
   methods: {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
@@ -113,6 +117,19 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
+    },
+    getParams() {
+      const routerParams = this.$route.query.key;
+      // 将数据放在当前组件的数据内
+      this.addForm.key = routerParams;
+      this.addForm.class = this.$route.query.name;
+      this.addForm.value = this.$route.query.value;
+      this.addForm.class = this.$route.query.name;
+      if (this.$route.query.default === "是") {
+        this.addForm.default = "1";
+      }else{
+        this.addForm.default = "2";
+      }
     }
   }
 };

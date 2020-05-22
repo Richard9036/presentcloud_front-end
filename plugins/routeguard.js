@@ -1,3 +1,4 @@
+import Cookie from 'js-cookie'
 export default ({app }) => {
   // 挂载路由导航守卫
   app.router.beforeEach((to, from, next) => {
@@ -6,9 +7,10 @@ export default ({app }) => {
     // next 是一个函数，表示放行
     //     next()  放行    next('/login')  强制跳转
 
-    if (to.path === "/login") return next();
+    if (to.path === '/login') return next();
     // 获取token
-    const tokenStr = window.sessionStorage.getItem("token");
+    console.log(app.$cookies.get('sid'))
+    const tokenStr = app.$cookies.get('sid')
     if (!tokenStr) return next("/login");
     next();
   });
