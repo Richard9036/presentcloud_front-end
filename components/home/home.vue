@@ -7,7 +7,7 @@
       @close="handleClose"
       router
     >
-      <el-submenu index="1">
+      <!-- <el-submenu index="1">
         <template slot="title">
           <i class="el-icon-location"></i>
           <span>系统管理</span>
@@ -17,7 +17,7 @@
           <el-menu-item index="/home/join">加入班课</el-menu-item>
           <el-menu-item index="/home/already">已加入班课</el-menu-item>
         </el-menu-item-group>
-      </el-submenu>
+      </el-submenu> -->
     </el-menu>
   </el-row>
 </template>

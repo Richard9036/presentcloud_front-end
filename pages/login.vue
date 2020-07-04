@@ -3,13 +3,7 @@
     <nuxt />
     <img class="img" id="logo_img" src="@/assets/login/logo.png" />
     <span id="logo_text" class="text">后台管理系统</span>
-    <el-menu
-      mode="horizontal"
-      background-color="transparent"
-      active-text-color="blue"
-    >
-
-    </el-menu>
+    <el-menu mode="horizontal" background-color="transparent" active-text-color="blue"></el-menu>
     <!-- 账号登陆 -->
     <el-form
       ref="loginFormRef"
@@ -22,7 +16,7 @@
         <el-input
           v-model="loginForm.username"
           prefix-icon="iconfont icon-user"
-          placeholder="请输入用户名"
+          placeholder="请输入用户名/手机号"
         ></el-input>
       </el-form-item>
       <el-form-item prop="password">
@@ -32,15 +26,12 @@
           type="password"
           placeholder="请输入密码"
         ></el-input>
-        <nuxt-link :to="{path:'/forgot_password'}">
-          <p class="forgot">忘记密码？</p>
-        </nuxt-link>
       </el-form-item>
       <el-form-item class="login_button">
         <el-button type="primary" @click="login">提交</el-button>
         <!-- <nuxt-link :to="{path:'/register'}">
           <el-button type="primary">注册</el-button>
-        </nuxt-link> -->
+        </nuxt-link>-->
       </el-form-item>
     </el-form>
     <!-- 版权声明 -->
@@ -56,7 +47,8 @@
 </template>
 
 <script>
-import Cookie from 'js-cookie'
+import _local from '../plugins/localStorage'
+import VueCookies from "vue-cookies";
 export default {
   layout: "custom",
   data() {
@@ -106,12 +98,15 @@ export default {
     login() {
       this.$refs.loginFormRef.validate(async valid => {
         if (valid) {
-          var qs = require('qs');
-          const { data: res } = await this.$axios.post("/login", qs.stringify(this.loginForm));
+          var qs = require("qs");
+          const { data: res } = await this.$axios.post(
+            "/login",
+            qs.stringify(this.loginForm)
+          );
           console.log(res);
           if (res.code !== 0) {
             this.$message({
-              message: res.meta.msg,
+              message: res.msg,
               type: "error"
             });
           } else {
@@ -119,10 +114,11 @@ export default {
               message: "登陆成功",
               type: "success"
             });
-            
-            // window.sessionStorage.setItem("token", res.token);
-            // this.$cookies.set("sid", res.token)
-            console.log(this.$cookies.get('sid'))
+
+            // window.localStorage.setItem("sid", res.token,60*60*24*10);
+            _local.set("sid", res.token,60*60*24*10*1000);
+            // this.$cookies.set("sid", res.token, "60s");
+            // console.log(this.$cookies.get("sid"));
             this.$router.push("/");
           }
         }

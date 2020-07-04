@@ -38,18 +38,33 @@
               <el-table-column label="电话" prop="tel"></el-table-column>
               <el-table-column label="ID" prop="userId"></el-table-column>
               <el-table-column label="性别" prop="sex"></el-table-column>
-              <el-table-column label="角色" prop="role_name"></el-table-column>
-              <el-table-column label="学校" prop="school"></el-table-column>
-              <el-table-column label="角色创建人" prop="creator"></el-table-column>
+              <el-table-column label="角色" prop="rolenames"></el-table-column>
+              <!-- <el-table-column label="角色创建人" prop="creator"></el-table-column> -->
               <el-table-column label="创建时间" :formatter="dateFormat" prop="creationdate"></el-table-column>
-              <el-table-column label="角色修改人" prop="modifier"></el-table-column>
+              <!-- <el-table-column label="角色修改人" prop="modifier"></el-table-column> -->
               <el-table-column label="修改时间" :formatter="dateFormat" prop="modificationdate"></el-table-column>
-              <el-table-column label="操作" width="150%">
+              <el-table-column label="操作" width="350%">
                 <template slot-scope="scope">
                   <!-- 修改按钮 -->
-                  <el-button type="primary" icon="el-icon-edit" @click="showEditDialog(scope.row)"></el-button>
+                  <el-button
+                    size="mini"
+                    type="primary"
+                    icon="el-icon-edit"
+                    @click="showEditDialog(scope.row)"
+                  >修改用户</el-button>
                   <!-- 删除按钮 -->
-                  <el-button type="danger" icon="el-icon-delete" @click="deleteUser(scope.row)"></el-button>
+                  <el-button
+                    size="mini"
+                    type="danger"
+                    icon="el-icon-delete"
+                    @click="deleteUser(scope.row)"
+                  >删除用户</el-button>
+                  <el-button
+                    size="mini"
+                    type="info"
+                    icon="el-icon-user-solid"
+                    @click="showRoleDialog(scope.row)"
+                  >分配角色</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -80,8 +95,8 @@
               <el-form-item label="手机">
                 <el-input v-model="editForm.tel"></el-input>
               </el-form-item>
-              <el-form-item label="密码" prop="password">
-                <el-input v-model="editForm.password"></el-input>
+              <el-form-item label="密码" prop="password" >
+                <el-input v-model="editForm.password" type="password"></el-input>
               </el-form-item>
               <el-form-item label="昵称">
                 <el-input v-model="editForm.nickname"></el-input>
@@ -91,6 +106,19 @@
               <el-button @click="editDialogVisible = false">取 消</el-button>
               <el-button type="primary" @click="editUserInfo">确 定</el-button>
             </span>
+          </el-dialog>
+          <!-- 分配权限 -->
+          <!-- 修改用户的对话框 -->
+          <el-dialog title="分配角色" :visible.sync="roleDialogVisible" width="50%">
+            <el-select v-model="roleForm.roleId" placeholder="请选择">
+              <el-option
+                v-for="item in options"
+                :key="item.roleId"
+                :label="item.roleName"
+                :value="item.roleId"
+              ></el-option>
+            </el-select>
+            <el-button @click="setRole">确定</el-button>
           </el-dialog>
         </div>
       </el-main>
@@ -119,6 +147,7 @@ export default {
     };
 
     return {
+      options: [],
       // // 获取用户列表的参数对象
       queryInfo: {
         // 搜索关键字
@@ -131,6 +160,7 @@ export default {
       userlist: [],
       editForm: {},
       postForm: {},
+      roleForm: {},
       // total: 0,
       // 添加表单的验证规则对象
       addFormRules: {
@@ -159,6 +189,8 @@ export default {
       },
       // 控制修改用户对话框的显示与隐藏
       editDialogVisible: false,
+      //控制角色分配
+      roleDialogVisible: false,
       // 修改表单的验证规则对象
       editFormRules: {
         name: [
@@ -188,6 +220,7 @@ export default {
   },
   created() {
     this.getUserList();
+    this.getRolesList();
   },
   methods: {
     //时间格式化
@@ -209,22 +242,11 @@ export default {
       this.total = this.userlist.length;
       // console.log(res);
     },
-    // // 监听 pagesize 改变的事件
-    // handleSizeChange(newSize) {
-    //   console.log(newSize);
-    //   this.queryInfo.pagesize = newSize;
-    //   this.getUserList();
-    // },
-    // // 监听 页码值 改变的事件
-    // handleCurrentChange(newPage) {
-    //   console.log(newPage);
-    //   this.queryInfo.pagenum = newPage;
-    //   this.getUserList();
-    // },
     // 展示编辑用户的对话框
     async showEditDialog(data) {
       console.log(data);
       this.editForm = data;
+      this.editForm.password="123456"
       console.log(this.editForm);
       this.editDialogVisible = true;
     },
@@ -280,6 +302,37 @@ export default {
       console.log(res);
       this.userlist = [res.data];
       console.log(this.userlist);
+    },
+    showRoleDialog(data) {
+      console.log(data);
+      this.roleForm.userId = data.userId;
+      console.log(this.roleForm);
+      this.roleDialogVisible = true;
+    },
+    // 获取所有角色的列表
+    async getRolesList() {
+      const { data: res } = await this.$axios.get("/role/findAllRoles");
+      // const { data: res } = await this.$axios.get("/user/findAllUsersGoPage");
+      this.options = res.data;
+      console.log("options");
+      console.log(this.options);
+    },
+    //分配角色
+    async setRole() {
+      console.log(this.roleForm);
+      var qs = require("qs");
+
+      const { data: res } = await this.$axios.post(
+        "/user/updateRole",
+        qs.stringify({ userId: this.roleForm.userId,roleId:this.roleForm.roleId })
+      );
+      console.log(res);
+      if (res.code != 200) {
+        return this.$message.error("分配角色失败！");
+      }
+      this.$message.success("分配角色成功！")
+      this.roleDialogVisible = false;
+      this.getUserList();
     }
   }
 };

@@ -6,65 +6,57 @@
         <nuxt />
       </el-aside>
       <el-main>
-        <el-row :gutter="2">
-          <el-col :xs="4" :sm="6" :md="8" :lg="9" :xl="11">
-            <div class="grid-content bg-purple-light">
-              <el-card class="box-card">
-                <div slot="header" class="clearfix">
-                  <span>菜单显隐藏设置</span>
-                  <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
-                </div>
-                <el-tree
-                  :data="data"
-                  show-checkbox
-                  default-expand-all
-                  node-key="id"
-                  ref="tree"
-                  :highlight-current="true"
-                  :props="defaultProps"
-                ></el-tree>
-
-                <span class="button">
-                  <el-button type="primary" @click="getCheckedKeys">保存</el-button>
-                  <el-button @click="resetChecked">清空</el-button>
-                </span>
-              </el-card>
-            </div>
-          </el-col>
-          <el-col :xs="4" :sm="6" :md="8" :lg="9" :xl="11">
-            <div class="grid-content bg-purple">
-              <el-card>
-                <el-table
-                  :data="data"
-                  style="width: 100%;margin-bottom: 20px;"
-                  row-key="id"
-                  :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
-                  default-expand-all
-                >
-                  <el-table-column prop="label" label="名称" sortable width="180"></el-table-column>
-                  <el-table-column prop="id" label="id" sortable width="180"></el-table-column>
-                  <el-table-column
-                    prop="isShow"
-                    label="是否显示"
-                    :formatter="stateFormat"
-                    sortable
-                    width="180"
-                  ></el-table-column>
-                  <el-table-column label="操作" width="150%">
-                    <template slot-scope="scope">
-                      <!-- 编辑按钮 -->
-                      <el-button
-                        type="primary"
-                        icon="el-icon-edit-outline"
-                        @click=" showEditDialog(scope.row)"
-                      ></el-button>
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </el-card>
-            </div>
-          </el-col>
-        </el-row>
+        <el-card>
+          <template>
+            <el-table :data="data">
+              <!-- 一级嵌套 -->
+              <el-table-column type="expand">
+                <template slot-scope="scope">
+                  <el-table :data="scope.row.subMenus" :show-header="false">
+                    <el-table-column label="菜单id" prop="menuId"></el-table-column>
+                    <el-table-column label="菜单名称" prop="menuName"></el-table-column>
+                    <el-table-column label="是否为页面" prop="ispage" :formatter="stateFormat"></el-table-column>
+                    <el-table-column label="是否显示">
+                      <template slot-scope="scope">
+                        <el-switch
+                          v-model="scope.row.isshow"
+                          active-color="#13ce66"
+                          inactive-color="#ff4949"
+                          :change="isshowChange(scope.row)"
+                        ></el-switch>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="操作" align="right">
+                      <template slot-scope="scope">
+                        <el-button size="mini" @click="showEditDialog(scope.row)">编辑</el-button>
+                        <!-- <el-button size="mini" type="danger" @click="delData">删除</el-button> -->
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </template>
+              </el-table-column>
+              <el-table-column label="班课id" prop="menu.menuId"></el-table-column>
+              <el-table-column label="班课名称" prop="menu.menuName"></el-table-column>
+              <el-table-column label="是否为页面" prop="menu.ispage" :formatter="stateFormatParent"></el-table-column>
+              <el-table-column label="是否显示">
+                <template slot-scope="scope">
+                  <el-switch
+                    v-model="scope.row.menu.isshow"
+                    active-color="#13ce66"
+                    inactive-color="#ff4949"
+                    :change="isshowChangeParent(scope.row.menu)"
+                  ></el-switch>
+                </template>
+              </el-table-column>
+              <el-table-column label="操作" align="right">
+                <template slot-scope="scope">
+                  <el-button size="mini" @click="showEditDialog(scope.row.menu)">编辑</el-button>
+                  <!-- <el-button size="mini" type="danger" @click="delData">删除</el-button> -->
+                </template>
+              </el-table-column>
+            </el-table>
+          </template>
+        </el-card>
         <!-- 修改用户的对话框 -->
         <el-dialog
           title="修改菜单"
@@ -73,11 +65,14 @@
           @close="editDialogClosed"
         >
           <el-form :model="editForm" ref="editFormRef" label-width="70px">
-            <el-form-item label="ID" >
-              <el-input v-model="editForm.id" :disabled="true"></el-input>
+            <el-form-item label="ID">
+              <el-input v-model="editForm.menuId" :disabled="true"></el-input>
             </el-form-item>
-            <el-form-item label="菜单名" >
-              <el-input v-model="editForm.label"></el-input>
+            <el-form-item label="菜单名">
+              <el-input v-model="editForm.menuName"></el-input>
+            </el-form-item>
+            <el-form-item label="菜单链接">
+              <el-input v-model="editForm.menuLink"></el-input>
             </el-form-item>
           </el-form>
           <span slot="footer" class="dialog-footer">
@@ -104,62 +99,7 @@ export default {
       // 控制修改用户对话框的显示与隐藏
       editDialogVisible: false,
       editForm: {},
-      data: [
-        {
-          id: 1,
-          label: "用户管理",
-          children: [
-            {
-              id: 11,
-              label: "新增用户",
-              isShow: 0
-            }
-          ]
-        },
-        {
-          id: 2,
-          label: "角色管理",
-          children: [
-            {
-              id: 21,
-              label: "新增角色",
-              isShow: 1
-            }
-          ]
-        },
-        {
-          id: 3,
-          label: "数据字典",
-          children: [
-            {
-              id: 31,
-              label: "数据字典录入",
-              isShow: 0
-            },
-            {
-              id: 32,
-              label: "数据层级展示",
-              isShow: 1
-            }
-          ]
-        },
-        {
-          id: 4,
-          label: "参数设置",
-          children: [{ id: 41, label: "系统参数设置", isShow: 1 }]
-        },
-        {
-          id: 5,
-          label: "权限管理",
-          children: [
-            {
-              id: 51,
-              label: "新增权限",
-              isShow: 1
-            }
-          ]
-        }
-      ],
+      data: [],
       defaultProps: {
         children: "children",
         label: "label"
@@ -167,66 +107,36 @@ export default {
     };
   },
   created() {
-    this.$nextTick(function() {
-      this.setCheckedKeys();
-    });
+    this.getMenuList();
   },
   methods: {
+    async getMenuList() {
+      const { data: res } = await this.$axios.get("/menu/findAllMenus");
+      console.log(res);
+      if (res.code != 200) {
+        return this.$message.error("获取菜单列表失败！");
+      }
+      this.data = res.data;
+    },
+    //子菜单输出格式化
     stateFormat(row, column) {
-      if (row.isShow == 1) {
+      if (row.ispage == 1) {
         return "是";
-      } else if (row.isShow == 0) {
+      } else if (row.ispage == 0) {
         return "否";
       } else {
         return "──";
       }
     },
-    setTreeItem(data, arr) {
-      var i;
-      console.log("arr" + arr);
-      data.map(item => {
-        if (arr.includes(item.id)) {
-          if (item.hasOwnProperty("isShow")) {
-            item.isShow = 1;
-          }
-          console.log(item.id + " " + item.isShow);
-        } else {
-          if (item.hasOwnProperty("isShow")) {
-            item.isShow = 0;
-          }
-          console.log(item.id + " " + item.isShow);
-        }
-        if (item.children) {
-          this.setTreeItem(item.children, arr);
-        }
-      });
-    },
-    getTreeItem(data) {
-      data.map(item => {
-        // console.log(item.id);
-        if (item.isShow == 1) {
-          this.checkArray.push(item.id);
-        } else {
-          if (item.children) {
-            this.getTreeItem(item.children);
-          }
-        }
-      });
-      console.log(this.checkArray);
-    },
-    getCheckedKeys() {
-      this.checkArray = this.$refs.tree.getCheckedKeys();
-      console.log("checkArray" + this.checkArray);
-      this.setTreeItem(this.data, this.checkArray);
-      this.setCheckedKeys;
-    },
-    async setCheckedKeys() {
-      this.getTreeItem(this.data);
-      // console.log(this.checkArray);
-      this.$refs.tree.setCheckedKeys(this.checkArray);
-    },
-    resetChecked() {
-      this.$refs.tree.setCheckedKeys([]);
+    //父菜单输出格式化
+    stateFormatParent(row, column) {
+      if (row.menu.ispage == 1) {
+        return "是";
+      } else if (row.ispage == 0) {
+        return "否";
+      } else {
+        return "──";
+      }
     },
     async showEditDialog(data) {
       this.editForm = data;
@@ -237,59 +147,55 @@ export default {
     editDialogClosed() {
       this.$refs.editFormRef.resetFields();
     },
-    editMenuInfo(){
-      this.data[0].label="管理用户"
+    async isshowChange(object) {
+      // console.log(object);
+      var qs = require("qs");
+      const { data: res } = await this.$axios.post(
+        "/menu/updateByparentId",
+        object
+      );
+      // console.log(res);
+    },
+    async isshowChangeParent(object) {
+      // console.log(object);
+      var qs = require("qs");
+      const { data: res } = await this.$axios.post("/menu/edit", object);
+      // console.log(res);
+    },
+    // 展示编辑用户的对话框
+    async showEditDialog(data) {
+      this.editForm = data;
+      console.log(this.editForm);
+      this.editDialogVisible = true;
+    },
+    async editMenuInfo() {
+      var result={}
+      if (this.editForm.parentMenuId == 0) {
+        const { data: res } = await this.$axios.post(
+          "/menu/edit",
+          this.editForm
+        );
+        console.log("父菜单更新")
+        result=res
+      } else {
+        const { data: res } = await this.$axios.post(
+          "/menu/updateByparentId",
+          this.editForm
+        );
+        console.log("子菜单更新")
+        result=res
+      }
+      console.log(result);
+      if (result.code != 200) {
+        return this.$message.error("更新菜单信息失败！");
+      }
       this.editDialogVisible = false;
+      this.getMenuList();
+      this.$message.success("更新菜单信息成功！");
     }
   }
 };
 </script>
 
 <style lang="less" scoped>
-/deep/.el-tree-node__label {
-  font-size: 16px;
-}
-.text {
-  font-size: 14px;
-}
-
-.item {
-  margin-bottom: 18px;
-}
-
-.clearfix:before,
-.clearfix:after {
-  display: table;
-  content: "";
-}
-.clearfix:after {
-  clear: both;
-}
-
-.box-card {
-  width: 400px;
-  height: 480px;
-}
-.button {
-  position: relative;
-  top: 55px;
-  // left: 50%;
-  transform: translate(-70%, -50%);
-}
-.el-col {
-  border-radius: 4px;
-}
-// .bg-purple-dark {
-//   background: #99a9bf;
-// }
-// .bg-purple {
-//   background: #d3dce6;
-// }
-// .bg-purple-light {
-//   background: #e5e9f2;
-// }
-.grid-content {
-  border-radius: 4px;
-  min-height: 36px;
-}
 </style>

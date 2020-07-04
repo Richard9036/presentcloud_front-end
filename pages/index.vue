@@ -1,10 +1,10 @@
 <template>
   <div>
     <el-container>
-      <el-aside width="200px">
+      <!-- <el-aside width="200px">
         <Home />
         <nuxt />
-      </el-aside>
+      </el-aside>-->
       <el-main>
         <HomeMain />
       </el-main>
@@ -19,6 +19,13 @@ export default {
   components: {
     Home,
     HomeMain
+  },
+  mounted() {
+    this.$nextTick(() => {
+      this.$nuxt.$loading.start();
+
+      setTimeout(() => this.$nuxt.$loading.finish(), 500);
+    });
   }
 };
 </script>

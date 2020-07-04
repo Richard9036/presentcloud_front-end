@@ -11,10 +11,11 @@
           <el-card>
             <!-- 用户列表区域 -->
             <!-- datalist是数据源头 -->
-            <el-table :data="datalist" border stripe>
+            <el-table :data="paramsList" border stripe>
               <!-- 索引列 -->
               <el-table-column type="index" label="#"></el-table-column>
-              <el-table-column label="名称(key)" prop="key"></el-table-column>
+              <el-table-column label="ID" prop="id"></el-table-column>
+              <el-table-column label="名称(key)" prop="keyName"></el-table-column>
               <el-table-column label="值(value)" prop="value"></el-table-column>
               <el-table-column label="操作" width="150%">
                 <template slot-scope="scope">
@@ -31,8 +32,11 @@
             @close="editDialogClosed"
           >
             <el-form :model="editForm" ref="editFormRef" label-width="70px">
+              <el-form-item label="ID">
+                <el-input v-model="editForm.id" :disabled="true"></el-input>
+              </el-form-item>
               <el-form-item label="名称">
-                <el-input v-model="editForm.key" :disabled="true"></el-input>
+                <el-input v-model="editForm.keyName" :disabled="true"></el-input>
               </el-form-item>
               <el-form-item label="经验值">
                 <el-input v-model="editForm.value"></el-input>
@@ -60,29 +64,44 @@ export default {
       value: "",
       // 控制修改用户对话框的显示与隐藏
       editDialogVisible: false,
-      datalist: [
-        {
-          key: "签到经验",
-          value: "2"
-        },
-        {
-          key: "签到距离",
-          value: "100"
-        }
-      ],
+      paramsList: [],
       editForm: {}
     };
   },
+  created() {
+    this.getParamsList();
+  },
   methods: {
+    //获取参数表
+    async getParamsList() {
+      const { data: res } = await this.$axios.get("/param/getallParam");
+      console.log(res);
+      if (res.code != 200) {
+        return this.$message.error("获取参数列表失败！");
+      }
+      this.paramsList = res.data;
+    },
     showEditDialog(data) {
       console.log(data);
       this.editForm = data;
       this.editDialogVisible = true;
     },
-    editParaInfo() {
-      this.datalist[0].value = 5;
+    async editParaInfo() {
+      var qs = require("qs");
+      let postForm = {
+        id: this.editForm.id + "",
+        key: this.editForm.keyName,
+        value: this.editForm.value
+      };
+      console.log("修改后参数")
+      console.log(postForm);
+      const { data: res } = await this.$axios.post(
+        "/param/update",
+        qs.stringify(postForm)
+      );
       // 关闭对话框
       this.editDialogVisible = false;
+      this.getParamsList();
     },
     // 监听修改用户对话框的关闭事件
     editDialogClosed() {

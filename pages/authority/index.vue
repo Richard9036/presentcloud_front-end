@@ -19,27 +19,42 @@
           <br />
           <el-table :data="rightsList" border stripe>
             <el-table-column label="#" type="index"></el-table-column>
-            <el-table-column label="权限名称" prop="authName"></el-table-column>
-            <el-table-column label="ID" prop="id"></el-table-column>
-            <el-table-column label="权限等级" prop="level">
-              <!-- <template slot-scope="scope">
-                <el-tag v-if="scope.row.level === '0'">一级</el-tag>
-                <el-tag type="success" v-else-if="scope.row.level === '1'">二级</el-tag>
-                <el-tag type="warning" v-else>三级</el-tag>
-              </template>-->
-            </el-table-column>
-            <el-table-column label="所属功能" prop="function"></el-table-column>
-            <el-table-column label="描述" prop="desc"></el-table-column>
+            <el-table-column label="权限名称" prop="name"></el-table-column>
+            <el-table-column label="权限ID" prop="permissionId"></el-table-column>
+            <el-table-column label="权限类型" prop="type"></el-table-column>
             <el-table-column label="操作" width="150%">
               <template slot-scope="scope">
                 <!-- 修改按钮 -->
-                <el-button type="primary" icon="el-icon-edit" @click="showEditDialog(scope.row.id)"></el-button>
+                <el-button type="primary" icon="el-icon-edit" @click="showEditDialog(scope.row)"></el-button>
                 <!-- 删除按钮 -->
-                <el-button type="danger" icon="el-icon-delete"></el-button>
+                <el-button type="danger" icon="el-icon-delete" @click="deleteAuth(scope.row)"></el-button>
               </template>
             </el-table-column>
           </el-table>
         </el-card>
+        <!-- 修改用户的对话框 -->
+        <el-dialog
+          title="修改权限"
+          :visible.sync="editDialogVisible"
+          width="50%"
+          @close="editDialogClosed"
+        >
+          <el-form :model="editForm" ref="editFormRef" label-width="70px">
+            <el-form-item label="权限ID">
+              <el-input v-model="editForm.permissionId" disabled></el-input>
+            </el-form-item>
+            <el-form-item label="权限名">
+              <el-input v-model="editForm.name" disabled></el-input>
+            </el-form-item>
+            <el-form-item label="权限类型">
+              <el-input v-model="editForm.type"></el-input>
+            </el-form-item>
+          </el-form>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="editDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="editAuthInfo">确 定</el-button>
+          </span>
+        </el-dialog>
       </el-main>
     </el-container>
   </div>
@@ -47,6 +62,7 @@
 
 <script>
 import Authority from "@/components/authority/authority.vue";
+import moment from "moment";
 export default {
   components: {
     Authority
@@ -54,15 +70,10 @@ export default {
   data() {
     return {
       // 权限列表
-      rightsList: [
-        {
-          authName: "权限1",
-          id: "001",
-          level: "3",
-          function: "用户管理",
-          desc: "用户信息增删改查"
-        }
-      ]
+      rightsList: [],
+      editForm: {},
+      // 控制修改用户对话框的显示与隐藏
+      editDialogVisible: false
     };
   },
   created() {
@@ -72,13 +83,59 @@ export default {
   methods: {
     // 获取权限列表
     async getRightsList() {
-      // const { data: res } = await this.$http.get("rights/list");
-      // if (res.meta.status !== 200) {
-      //   return this.$message.error("获取权限列表失败！");
-      // }
-
-      // this.rightsList = res.data;
-      console.log(this.rightsList);
+      const { data: res } = await this.$axios.get(
+        "/permission/findAllPermission"
+      );
+      if (res.code != 200) {
+        return this.$message.error("获取菜单列表失败！");
+      }
+      this.rightsList = res.data;
+      console.log(res.data);
+    },
+    // 展示编辑用户的对话框
+    async showEditDialog(data) {
+      console.log(data);
+      this.editForm = data;
+      console.log(this.editForm);
+      this.editDialogVisible = true;
+    },
+    // 监听修改用户对话框的关闭事件
+    editDialogClosed() {
+      this.$refs.editFormRef.resetFields();
+    },
+    async editAuthInfo() {
+      console.log(this.editForm);
+      var qs = require("qs");
+      let postForm = {};
+      postForm.id = this.editForm.permissionId;
+      postForm.authName = this.editForm.name;
+      postForm.module = this.editForm.type;
+      const { data: res } = await this.$axios.post(
+        "/permission/edit",
+        qs.stringify(postForm)
+      );
+      console.log(res);
+      if (res.code != 200) {
+        return this.$message.error("更新权限信息失败！");
+      }
+      this.editDialogVisible = false;
+      this.getRightsList();
+      this.$message.success("更新权限信息成功！");
+    },
+    async deleteAuth(object) {
+      console.log(object);
+      var qs = require("qs");
+      const { data: res } = await this.$axios.post(
+        "/permission/delete",
+        object
+      );
+      console.log(res);
+      if (res.code != 200) {
+        return this.$message.error("删除权限信息失败！");
+      }
+      this.editDialogVisible = false;
+      this.getRightsList();
+      this.$message.success("删除权限信息成功！");
     }
   }
 };

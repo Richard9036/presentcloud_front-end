@@ -34,6 +34,7 @@ export default {
     "~plugins/vue-resource",
     "@/plugins/element-ui",
     '@/plugins/axios-plugin',
+    { src: "~/plugins/localStorage", ssr: false },
     // ssr=false只在客户端引入
     // https://www.jianshu.com/p/eb83b8d189bb
     { src: "~/plugins/routeguard", ssr: false },
@@ -63,12 +64,14 @@ export default {
   axios: {
     //是否允许跨域
     proxy: true,
-    browserBaseURL: "http://localhost:8080",
+    // browserBaseURL: "http://localhost:8080",
+    browserBaseURL: "http://47.115.117.97:8080",
     withCredentials: true,
   },
   proxy: {
     "/api": {
-      target: "http://localhost:8080/",
+      // target: "http://localhost:8080/",
+      target: "http://47.115.117.97:8080/",
       changeOrigin: true,
       pathRewrite: {
         "^/api": "/"

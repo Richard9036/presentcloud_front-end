@@ -10,12 +10,12 @@
       <el-row type="flex" class="navs">
         <nuxt-link to="/">系统首页</nuxt-link>
         <nuxt-link to="/user">用户管理</nuxt-link>
-        <nuxt-link to="/menu">菜单管理</nuxt-link>
         <nuxt-link to="/role">角色管理</nuxt-link>
+        <nuxt-link to="/class">班课管理</nuxt-link>
+        <nuxt-link to="/menu">菜单管理</nuxt-link>
         <nuxt-link to="/authority">权限管理</nuxt-link>
         <nuxt-link to="/data">数据字典</nuxt-link>
         <nuxt-link to="/setting">参数设置</nuxt-link>
-        <nuxt-link to="/class">班课管理</nuxt-link>
       </el-row>
       <el-dropdown>
         <span class="el-dropdown-link">
@@ -38,9 +38,14 @@
 <script>
 import Cookie from "js-cookie";
 export default {
+    data() {
+    return { 
+    };
+  },
   methods: {
     logout() {
-      this.$cookies.remove("sid");
+      window.localStorage.removeItem("sid");
+      // this.$cookies.remove("sid");
       this.$router.push("/login");
     }
   }

@@ -1,4 +1,5 @@
-import Cookie from 'js-cookie'
+import _local from '../plugins/localStorage'
+import { Col } from 'element-ui';
 export default ({app }) => {
   // 挂载路由导航守卫
   app.router.beforeEach((to, from, next) => {
@@ -9,8 +10,12 @@ export default ({app }) => {
 
     if (to.path === '/login') return next();
     // 获取token
-    console.log(app.$cookies.get('sid'))
-    const tokenStr = app.$cookies.get('sid')
+    // console.log(app.$cookies.get('sid'))
+    // const tokenStr = app.$cookies.get('sid')
+    const tokenStr=_local.get('sid')
+    console.log("storage方法")
+    console.log(tokenStr)
+    console.log("--------")
     if (!tokenStr) return next("/login");
     next();
   });

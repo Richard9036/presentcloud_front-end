@@ -8,42 +8,24 @@
       <el-main>
         <el-col :span="10" class="create">
           <el-form
-            :model="rightsForm"
+            :model="Permission"
             :rules="rules"
             ref="ruleForm"
             label-width="100px"
             class="demo-ruleForm"
           >
             <el-form-item label="权限名" prop="authName">
-              <el-input v-model="rightsForm.authName"></el-input>
-            </el-form-item>
-            <el-form-item label="权限描述" prop="desc">
-              <el-input type="textarea" v-model="rightsForm.desc"></el-input>
-            </el-form-item>
-            <el-form-item label="权限等级" prop="level">
-              <el-select v-model="rightsForm.level" placeholder="请选择权限等级">
-                <el-option label="1" value="1"></el-option>
-                <el-option label="2" value="2"></el-option>
-                <el-option label="3" value="3"></el-option>
+              <el-select v-model="Permission.name" multiple filterable placeholder="请选择权限名称">
+                <el-option v-for="item in optionsAuth" :key="item" :label="item" :value="item"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="所属模块" prop="module">
-              <el-select v-model="rightsForm.module" placeholder="请选择所属功能">
-                <el-option label="用户管理" value="1"></el-option>
-                <el-option label="角色管理" value="2"></el-option>
-                <el-option label="系统首页" value="3"></el-option>
+            <el-form-item label="所属类型" prop="module">
+              <el-select v-model="Permission.type" filterable allow-create placeholder="请选择或输入所属类型">
+                <el-option v-for="item in optionsType" :key="item" :label="item" :value="item"></el-option>
               </el-select>
-            </el-form-item>
-            <el-form-item label="权限功能" prop="function">
-              <el-checkbox-group v-model="rightsForm.function">
-                <el-checkbox label="数据添加" name="type"></el-checkbox>
-                <el-checkbox label="数据更新" name="type"></el-checkbox>
-                <el-checkbox label="数据修改" name="type"></el-checkbox>
-                <el-checkbox label="数据查询" name="type"></el-checkbox>
-              </el-checkbox-group>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="submitForm('ruleForm')">添加</el-button>
+              <el-button type="primary" @click="createAuth">添加</el-button>
               <el-button @click="resetForm('ruleForm')">重置</el-button>
             </el-form-item>
           </el-form>
@@ -61,46 +43,67 @@ export default {
   },
   data() {
     return {
-      rightsForm: {
-        authName: "",
-        id: "",
-        level: "",
-        module: "",
-        function: [],
-        desc: ""
-      },
-
-      ruleForm: {
-        role: "",
-
-        description: ""
-      },
+      optionsType: [],
+      optionsAuth: [],
+      Permission: {},
       rules: {
         authName: [
           { required: true, message: "请输入角色名", trigger: "blur" }
         ],
-        desc: [{ required: false, message: "请输入权限描述", trigger: "blur" }],
-        level: [
-          { required: true, message: "请选择权限等级", trigger: "change" }
-        ],
         module: [
           { required: true, message: "请选择所属模块", trigger: "blur" }
         ],
-        function: [{type: "array",required: true,message: "请至少选择一个权限",trigger: "change"}
+        function: [
+          {
+            type: "array",
+            required: true,
+            message: "请至少选择一个权限",
+            trigger: "change"
+          }
         ]
       }
     };
   },
+  created() {
+    this.getOptions();
+  },
   methods: {
-    submitForm(formName) {
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          alert("submit!");
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
-      });
+    // 获取权限列表
+    async getOptions() {
+      const { data: res1 } = await this.$axios.get("/permission/getTypes");
+      this.optionsType = res1.data;
+      console.log(res1.data);
+      const { data: res2 } = await this.$axios.get("/permission/getNames");
+      this.optionsAuth = res2.data;
+      console.log(res2.data);
+    },
+    //创建权限
+    async createAuth() {
+      console.log(this.Permission);
+      var qs = require("qs");
+      let auth = {};
+      auth.type = this.Permission.type;
+      auth.names = this.Permission.name;
+      console.log(auth);
+      var test = this.Permission.name;
+      var temp = JSON.stringify(Object.values(test));
+      //var test=this.Permission.name;
+      console.log(Object.keys(test));
+      console.log(Object.values(test));
+      console.log(temp);
+      console.log(qs.stringify({ type: this.Permission.type, names: temp }));
+      const { data: res } = await this.$axios.post(
+        "/permission/addPermissions",
+        qs.stringify({ type: this.Permission.type, names: temp })
+        //{ type: auth.type, names: test }
+      );
+      console.log(res);
+      if (res.code != 200) {
+        return this.$message.error("创建权限信息失败！");
+      }
+      this.editDialogVisible = false;
+      this.$router.push("/authority");
+      this.$message.success("创建权限信息成功！");
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
